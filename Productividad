@@ -1,4 +1,4 @@
-SELECT 
+SELECT /*+PARALLEL (8)*/
 	COLLID.CLCOLLID, 
 	COLLID.CLNAME,   
 	COLLID.CLUTYPE, 
@@ -9,7 +9,7 @@ ORDER BY 1
 
 /
 
-SELECT 
+SELECT /*+PARALLEL (8)*/
 	 DISTINCT TRUNC(PTPSCHED.PPDUE), 
 	 PTPSCHED.PPCOLLID, 
 	 COUNT(DISTINCT PTPSCHED.PPACCT), 
@@ -37,7 +37,8 @@ GROUP BY
 
 /
 	
-	SELECT date1, workeddate1, name_1, nvl(workedAccts,0) workedAccts, nvl(productiveAccts,0) productiveAccts, nvl((productiveAccts / workedAccts),0) percProductiveAccts, nvl(ppGeneradas,0) ppGeneradas, nvl((ppGeneradas / productiveAccts),0) percPPGeneradas, nvl(totPPAccts,0) totPPAccts, nvl(keptPPAccts,0) keptPPAccts, nvl((keptPPAccts / totPPAccts),0) percKeptPPAcctsVsTotPPAccts, nvl(brokenppaccts,0) brokenppaccts, nvl((brokenPPAccts / totPPAccts),0) percBrokPPAcctsVsTotPPAccts
+	SELECT /*+PARALLEL (8)*/
+	date1, workeddate1, name_1, nvl(workedAccts,0) workedAccts, nvl(productiveAccts,0) productiveAccts, nvl((productiveAccts / workedAccts),0) percProductiveAccts, nvl(ppGeneradas,0) ppGeneradas, nvl((ppGeneradas / productiveAccts),0) percPPGeneradas, nvl(totPPAccts,0) totPPAccts, nvl(keptPPAccts,0) keptPPAccts, nvl((keptPPAccts / totPPAccts),0) percKeptPPAcctsVsTotPPAccts, nvl(brokenppaccts,0) brokenppaccts, nvl((brokenPPAccts / totPPAccts),0) percBrokPPAcctsVsTotPPAccts
 FROM
 
 (SELECT DISTINCT TRUNC(ACTFIL.ACACTDTE) date1, ACTFIL.ACCIDNAM name_1
@@ -160,7 +161,8 @@ ORDER BY date1, workeddate1
 
 /
 
-SELECT date1, workeddate1, name_1, nvl(workedAccts,0) workedAccts
+SELECT /*+PARALLEL (8)*/ 
+date1, workeddate1, name_1, nvl(workedAccts,0) workedAccts
 
 FROM
 
