@@ -1,0 +1,56 @@
+SELECT 
+    /*+PARALLEL(18)*/
+     RTRIM(TRIM((NP.MES))) AS mes, 
+     NP.ANIO, 
+     NP.CUENTA,
+     TO_NUMBER( NP.CUENTA) AS CTA, 
+     NP.Negativas_de_Pago,
+     NP.CODIGO_DE_CARTA, 
+     NP.DESCRIPCION,'1' as Conteo_CC , 
+     NP.FILA, 
+     NP.F, 
+     CASE 
+     WHEN NP.F IN ('Y','P','SD','SC') 
+     THEN 'RA' WHEN NP.F IN ('X','C') 
+     THEN 'RMA' WHEN NP.F IN ('SM','W','L') 
+     THEN 'RMB' ELSE '' 
+     END AS RIESGO,
+     CASE 
+     WHEN U6ORG='100' THEN '100 - LPC'
+     WHEN U6ORG='110' THEN '110 - DILISA'
+     WHEN U6ORG='200' THEN '200 - SBB_VISA'
+     WHEN U6ORG='210' THEN '210 - SBB_TD'
+     WHEN U6ORG='220' THEN '220 - CRED_CONSUM0'
+     ELSE '' END AS ORGANIZACION
+     
+     FROM 
+     ( SELECT TO_CHAR(ACACTDTE, 'Month','nls_date_language=spanish') AS MES ,
+              EXTRACT(YEAR FROM TRUNC (ACACTDTE)) AS ANIO,
+              ACACCT AS CUENTA, COUNT (ACRCCODE) AS Negativas_de_Pago,
+              ACLCCODE AS CODIGO_DE_CARTA,
+              AVDESC AS DESCRIPCION,
+              DMQUE AS FILA,  
+              U6ORG, 
+              CASE WHEN SUBSTR (DMQUE,-2) IN ('SM','SD','SC')
+                   THEN SUBSTR (DMQUE,-2) ELSE  SUBSTR (DMQUE,-1) 
+              END AS F 
+              FROM RCVRY.ACTFIL  
+              
+     LEFT OUTER JOIN  
+     
+     RCVRY.ACTVERTB ON ACLCCODE=AVCODE 
+     
+     LEFT OUTER JOIN 
+     
+     (SELECT * FROM RCVRY.DELQUDA_BEGIN WHERE TRUNC(BEGINDT)= TRUNC(TO_DATE('01/07/2025','dd/mm/yyyy')) 
+     UNION ALL 
+     SELECT * FROM RCVRY.DELQUDA_BEGIN_MP WHERE TRUNC(BEGINDT)= TRUNC(TO_DATE('01/07/2025','dd/mm/yyyy')))  ON DMACCT = ACACCT 
+     WHERE TRUNC (ACACTDTE) >= TRUNC(TO_DATE('01/07/2025','dd/mm/yyyy') )  AND TRUNC (ACACTDTE) <= TRUNC(TO_DATE('31/07/2025','dd/mm/yyyy') )  
+     AND  ACRCCODE='NP' 
+     AND  ACLCCODE IS NOT NULL
+     AND AVACCTG IN ('6','5')
+     AND AVTYPE  IN ('L')
+     AND DMQUE NOT IN ('DAB7','DAD1','DAD2','DAD7','DALR','GAA2','GAA5','GAS1','LRS7','ABN2','GAA4','GHC8','SPGA','TGCU')
+     
+     GROUP BY ACACCT,ACLCCODE,ACRCCODE,AVDESC,TO_CHAR(ACACTDTE, 'Month','nls_date_language=spanish'),EXTRACT(YEAR FROM TRUNC (ACACTDTE)),DMQUE, U6ORG,(CASE WHEN SUBSTR (DMQUE,-2) IN ('SM','SD','SC') THEN SUBSTR (DMQUE,-2) ELSE  SUBSTR (DMQUE,-1) END) )NP 
+     WHERE NP.F IN ('1','2','B','E','G','I','K','O','M','R','S','T','U','W','Y','P','X','C','L','N','7','9','5','A','6','F','r','0','3','8','4','D')  
