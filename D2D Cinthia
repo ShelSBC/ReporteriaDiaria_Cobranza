@@ -28,6 +28,7 @@ FROM
  
 WHERE DMOFFICR IN ('i8001fvs','i8001mpc','i8001rpm','i8001rcc','i8001mlm','i8001cmv','18001jjg','i8001cse','i8001jml','i8001jgr','i8001lsf','i8001jha','i8001mgc','i8001jsm','i8001fcg','i8001mmb','i8001jes','i8001aas','i8001fjc',
 'i8001avg','i8001dpl','i8001dsh','i8001far','i8001jct','i8001rrc','i8001mmt','i8001dmh','i8001ecg','i8001fng','i8001mtr','i8001gcl','i8001ofl','i8001mre')
+AND DMACCT NOT IN ('0004178490001608919','0000013000013778167')
 ) D1
 
 LEFT OUTER JOIN
@@ -49,6 +50,7 @@ AND DMACCT IN (
  
 WHERE  DMOFFICR IN ('i8001fvs','i8001mpc','i8001rpm','i8001rcc','i8001mlm','i8001cmv','18001jjg','i8001cse','i8001jml','i8001jgr','i8001lsf','i8001jha','i8001mgc','i8001jsm','i8001fcg','i8001mmb','i8001jes','i8001aas','i8001fjc',
 'i8001avg','i8001dpl','i8001dsh','i8001far','i8001jct','i8001rrc','i8001mmt','i8001dmh','i8001ecg','i8001fng','i8001mtr','i8001gcl','i8001ofl','i8001mre')
+AND DMACCT NOT IN ('0004178490001608919','0000013000013778167')
 )
 AND DMACCTG = U6ACCTG
 AND DMACCT = U6ACCT) D2
