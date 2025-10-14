@@ -13,7 +13,7 @@ WHEN U6ORG=220 THEN 'CREDITO AL CONSUMO'
 WHEN U6ORG=230 THEN 'MINI PAGOS'
 END AS U6ORG, 
     CASE
-    WHEN DMOFFICR IN ('i8001fvs','i8001mpc','i8001rpm','i8001rcc','i8001mlm','i8001cmv','18001jjg') then 'Miguel Angel Guevara Rodríguez'
+    WHEN DMOFFICR IN ('i8001fvs','i8001mpc','i8001rpm','i8001rcc','i8001mlm','i8001cmv','i8001jjg') then 'Miguel Angel Guevara Rodríguez'
     WHEN DMOFFICR IN ('i8001cse','i8001jml','i8001jgr','i8001lsf','i8001jha','i8001mgc') then 'Raul Eslava Morales'
     WHEN DMOFFICR IN ('i8001jsm','i8001fcg','i8001mmb','i8001jes','i8001aas','i8001fjc') then 'Miguel Angel Engrandes Ortiz'
     WHEN DMOFFICR IN ('i8001avg','i8001dpl','i8001dsh','i8001far','i8001jct','i8001rrc','i8001mmt') then 'Jannet Calleja Aguilar'
@@ -22,13 +22,12 @@ END AS U6ORG,
     END AS JEFE
 
 FROM 
-(SELECT DMACCT,DMOFFICR,U6ORG,U6CYCDUE,DMLABEL6,DMCURBAL FROM RCVRY.DELQUDA_BEGIN WHERE trunc(BEGINDT) = '01-Sep-2025'
+(SELECT DMACCT,DMOFFICR,U6ORG,U6CYCDUE,DMLABEL6,DMCURBAL FROM RCVRY.DELQUDA_BEGIN WHERE trunc(BEGINDT) = '01-Oct-2025'
  UNION ALL
- SELECT DMACCT,DMOFFICR,U5ORG,U5CYCDUE,DMLABEL6,DMCURBAL FROM RCVRY.DELQUDA_BEGIN_MP WHERE trunc(BEGINDT) = '01-Sep-2025')
+ SELECT DMACCT,DMOFFICR,U5ORG,U5CYCDUE,DMLABEL6,DMCURBAL FROM RCVRY.DELQUDA_BEGIN_MP WHERE trunc(BEGINDT) = '01-Oct-2025')
  
-WHERE DMOFFICR IN ('i8001fvs','i8001mpc','i8001rpm','i8001rcc','i8001mlm','i8001cmv','18001jjg','i8001cse','i8001jml','i8001jgr','i8001lsf','i8001jha','i8001mgc','i8001jsm','i8001fcg','i8001mmb','i8001jes','i8001aas','i8001fjc',
+WHERE DMOFFICR IN ('i8001fvs','i8001mpc','i8001rpm','i8001rcc','i8001mlm','i8001cmv','i8001jjg','i8001cse','i8001jml','i8001jgr','i8001lsf','i8001jha','i8001mgc','i8001jsm','i8001fcg','i8001mmb','i8001jes','i8001aas','i8001fjc',
 'i8001avg','i8001dpl','i8001dsh','i8001far','i8001jct','i8001rrc','i8001mmt','i8001dmh','i8001ecg','i8001fng','i8001mtr','i8001gcl','i8001ofl','i8001mre')
-AND DMACCT NOT IN ('0006088750001801317','0006088750021225505')
 ) D1
 
 LEFT OUTER JOIN
@@ -44,13 +43,13 @@ LEFT OUTER JOIN
 WHERE DMACCTG IN ('5','6')
 AND DMACCT IN (
                 SELECT DMACCT FROM
-               (SELECT DMACCT,DMOFFICR FROM RCVRY.DELQUDA_BEGIN WHERE trunc(BEGINDT) = '01-Sep-2025'
+               (SELECT DMACCT,DMOFFICR FROM RCVRY.DELQUDA_BEGIN WHERE trunc(BEGINDT) = '01-Oct-2025'
                 UNION ALL
-                SELECT DMACCT,DMOFFICR FROM RCVRY.DELQUDA_BEGIN_MP WHERE trunc(BEGINDT) = '01-Sep-2025')
+                SELECT DMACCT,DMOFFICR FROM RCVRY.DELQUDA_BEGIN_MP WHERE trunc(BEGINDT) = '01-Oct-2025')
  
-WHERE  DMOFFICR IN ('i8001fvs','i8001mpc','i8001rpm','i8001rcc','i8001mlm','i8001cmv','18001jjg','i8001cse','i8001jml','i8001jgr','i8001lsf','i8001jha','i8001mgc','i8001jsm','i8001fcg','i8001mmb','i8001jes','i8001aas','i8001fjc',
+WHERE  DMOFFICR IN ('i8001fvs','i8001mpc','i8001rpm','i8001rcc','i8001mlm','i8001cmv','i8001jjg','i8001cse','i8001jml','i8001jgr','i8001lsf','i8001jha','i8001mgc','i8001jsm','i8001fcg','i8001mmb','i8001jes','i8001aas','i8001fjc',
 'i8001avg','i8001dpl','i8001dsh','i8001far','i8001jct','i8001rrc','i8001mmt','i8001dmh','i8001ecg','i8001fng','i8001mtr','i8001gcl','i8001ofl','i8001mre')
-AND DMACCT NOT IN ('0006088750001801317','0006088750021225505')
+
 )
 AND DMACCTG = U6ACCTG
 AND DMACCT = U6ACCT) D2
