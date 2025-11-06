@@ -166,6 +166,7 @@ GROUP BY TRUNC(PTPSCHED.PPDUE), COLLID.CLCOLLID, COLLID.CLDEPT) brokenPP
 ON name_1 = brokenPPCollid
 AND date1 = workeddate6
 
+WHERE name_1 NOT IN ('mortegan')
 ORDER BY date1, workeddate1
 
 /
