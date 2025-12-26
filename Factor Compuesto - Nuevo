@@ -1,5 +1,5 @@
     SELECT /*+PARALLEL (18)*/
-DISTINCT A1.FECHA,A1.PPCOLLID,A1.PPACCT,A1.CUENTA, SUM(DISTINCT A1.CUENTAS), SUM(A1.PAGOS),A1.PPAMT, SUM(A1.IMP_PAGO)
+DISTINCT A1.FECHA,REPLACE(A1.PPCOLLID,'i7003vcp','i7065vcp') PPCOLLID,A1.PPACCT,A1.CUENTA, SUM(DISTINCT A1.CUENTAS), SUM(A1.PAGOS),A1.PPAMT, SUM(A1.IMP_PAGO)
 FROM(
     SELECT DISTINCT (PMTFIL.PMTDDESC) AS UNIQ, TRUNC(PTPSCHED.PPDUE) AS FECHA, PTPSCHED.PPCOLLID, PTPSCHED.PPACCT,
     CASE
@@ -34,7 +34,7 @@ ORDER BY A1.FECHA ASC
 
 
 SELECT /*+PARALLEL (18)*/
-date1, workeddate1, name_1, nvl(workedAccts,0) workedAccts, nvl(productiveAccts,0) productiveAccts, nvl((productiveAccts / workedAccts),0) percProductiveAccts, nvl(ppGeneradas,0) ppGeneradas, nvl((ppGeneradas / productiveAccts),0) percPPGeneradas, nvl(totPPAccts,0) totPPAccts, nvl(keptPPAccts,0) keptPPAccts, nvl((keptPPAccts / totPPAccts),0) percKeptPPAcctsVsTotPPAccts, nvl(brokenppaccts,0) brokenppaccts, nvl((brokenPPAccts / totPPAccts),0) percBrokPPAcctsVsTotPPAccts
+date1, workeddate1,REPLACE(name_1,'i7003vcp','i7065vcp') name_1, nvl(workedAccts,0) workedAccts, nvl(productiveAccts,0) productiveAccts, nvl((productiveAccts / workedAccts),0) percProductiveAccts, nvl(ppGeneradas,0) ppGeneradas, nvl((ppGeneradas / productiveAccts),0) percPPGeneradas, nvl(totPPAccts,0) totPPAccts, nvl(keptPPAccts,0) keptPPAccts, nvl((keptPPAccts / totPPAccts),0) percKeptPPAcctsVsTotPPAccts, nvl(brokenppaccts,0) brokenppaccts, nvl((brokenPPAccts / totPPAccts),0) percBrokPPAcctsVsTotPPAccts
 FROM
 
 (SELECT distinct trunc(ACTFIL.ACACTDTE) date1, ACTFIL.ACCIDNAM name_1
