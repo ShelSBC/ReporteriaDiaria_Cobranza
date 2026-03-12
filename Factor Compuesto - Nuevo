@@ -1,16 +1,7 @@
     SELECT /*+PARALLEL (18)*/
-DISTINCT A1.FECHA,A1.PPCOLLID,A1.PPACCT,A1.CUENTA, SUM(DISTINCT A1.CUENTAS), SUM(A1.PAGOS),A1.PPAMT, SUM(A1.IMP_PAGO)
+DISTINCT A1.FECHA,A1.PPCOLLID,A1.PPACCT, SUM(A1.PAGOS),A1.PPAMT, SUM(A1.IMP_PAGO)
 FROM(
-    SELECT DISTINCT (PMTFIL.PMTDDESC) AS UNIQ, TRUNC(PTPSCHED.PPDUE) AS FECHA, PTPSCHED.PPCOLLID, PTPSCHED.PPACCT,
-    CASE
-    WHEN substr(PTPSCHED.PPACCT,1,5) = '00000' THEN substr(PTPSCHED.PPACCT,1,11) ||''||'****'||''|| substr(PTPSCHED.PPACCT,16,4)
-    WHEN substr(PTPSCHED.PPACCT,1,5) = '00014' THEN substr(PTPSCHED.PPACCT,1,9) ||''||'******'||''|| substr(PTPSCHED.PPACCT,16,4)
-    WHEN substr(PTPSCHED.PPACCT,1,5) = '00041' THEN substr(PTPSCHED.PPACCT,1,9) ||''||'******'||''|| substr(PTPSCHED.PPACCT,16,4)
-    WHEN substr(PTPSCHED.PPACCT,1,5) = '00040' THEN substr(PTPSCHED.PPACCT,1,9) ||''||'******'||''|| substr(PTPSCHED.PPACCT,16,4)
-    WHEN substr(PTPSCHED.PPACCT,1,5) = '00064' THEN substr(PTPSCHED.PPACCT,1,9) ||''||'******'||''|| substr(PTPSCHED.PPACCT,16,4)
-    ELSE '0' END AS CUENTA,
-
-    COUNT(DISTINCT PMTFIL.PMACCT) AS CUENTAS , COUNT(PMTFIL.PMTDDESC)AS PAGOS, PTPSCHED.PPAMT, SUM (PMTFIL.PMTAMT) IMP_PAGO
+    SELECT DISTINCT (PMTFIL.PMTDDESC) AS UNIQ, TRUNC(PTPSCHED.PPDUE) AS FECHA, PTPSCHED.PPCOLLID, PTPSCHED.PPACCT, COUNT(PMTFIL.PMTDDESC)AS PAGOS, PTPSCHED.PPAMT, SUM (PMTFIL.PMTAMT) IMP_PAGO
     FROM rcvry.PMTFIL, rcvry.DELQMST, rcvry.PTPSCHED
     WHERE ((PTPSCHED.PPACCTG in ('6','5'))
     AND (DELQMST.DMACCTG in ('6','5'))
@@ -26,7 +17,7 @@ FROM(
     AND DELQMST.DMACCTG = PMTFIL.PMACCTG
     AND DELQMST.DMACCT = PMTFIL.PMACCT
     GROUP BY trunc(PTPSCHED.PPDUE), PTPSCHED.PPCOLLID, PTPSCHED.PPACCT, PTPSCHED.PPAMT,(PMTFIL.PMTDDESC))A1
-GROUP BY A1.FECHA,A1.PPCOLLID,  A1.PPACCT,A1.CUENTA,A1.PPAMT
+GROUP BY A1.FECHA,A1.PPCOLLID,A1.PPACCT,A1.PPAMT
 ORDER BY A1.FECHA ASC
 
 
@@ -34,7 +25,16 @@ ORDER BY A1.FECHA ASC
 
 
 SELECT /*+PARALLEL (18)*/
-date1, workeddate1,REPLACE(name_1,'i7003vcp','i7065vcp') name_1, nvl(workedAccts,0) workedAccts, nvl(productiveAccts,0) productiveAccts, nvl((productiveAccts / workedAccts),0) percProductiveAccts, nvl(ppGeneradas,0) ppGeneradas, nvl((ppGeneradas / productiveAccts),0) percPPGeneradas, nvl(totPPAccts,0) totPPAccts, nvl(keptPPAccts,0) keptPPAccts, nvl((keptPPAccts / totPPAccts),0) percKeptPPAcctsVsTotPPAccts, nvl(brokenppaccts,0) brokenppaccts, nvl((brokenPPAccts / totPPAccts),0) percBrokPPAcctsVsTotPPAccts
+date1, workeddate1, name_1, nvl(workedAccts,0) workedAccts, nvl(productiveAccts,0) productiveAccts, nvl((productiveAccts / workedAccts),0) percProductiveAccts, nvl(ppGeneradas,0) ppGeneradas, nvl((ppGeneradas / productiveAccts),0) percPPGeneradas, nvl(totPPAccts,0) totPPAccts, nvl(keptPPAccts,0) keptPPAccts, nvl((keptPPAccts / totPPAccts),0) percKeptPPAcctsVsTotPPAccts, nvl(brokenppaccts,0) brokenppaccts, nvl((brokenPPAccts / totPPAccts),0) percBrokPPAcctsVsTotPPAccts,
+CLSSNUM, CLNAME, CLDEPT, FORMATO, 
+CASE 
+WHEN CLDEPT IN ('Campeche','Ciudad del Carmen','Durango','Monclova','Monterrey','Pachuca','Poza Rica','Saltillo','Toluca','Torreón','Tuxpan','Villahermosa') THEN 'Zona 2 (EOV)'
+WHEN CLDEPT IN ('Acapulco','Aguascalientes','Chilpancingo','Cuautla','Cuernavaca','Fresnillo','Morelia','San Luis Potosí','Tepic','Veracruz','Xalapa','Zacatecas','Zamora') THEN 'Zona 3 (RAR)'
+WHEN CLDEPT IN ('Celaya','Colima','Guadalajara','Guanajuato','Irapuato','León','Puerto Vallarta','Querétaro','Salamanca','San Juan del Río','San Miguel de Allende','Uriangato') THEN 'Zona 4 (ARS)'
+WHEN CLDEPT IN ('Cancún','Chetumal','Ciudad Victoria','Comitán','Culiacán','Istmo','Los Mochis','Mazatlán','Mérida','Oaxaca','Playa del Carmen','Tampico','Tapachula','Tuxtepec','Tuxtla') THEN 'Zona 5 (MAM)'
+WHEN CLDEPT IN ('Chihuahua','Ciudad Juárez','Ciudad Obregón','Coatzacoalcos','Córdoba','Hermosillo','La Paz','Mexicali','Orizaba','Puebla','Tehuacán','Tijuana','Tlaxcala') THEN 'Zona 6 (HVV)'
+ELSE CLDEPT
+END ZONAS
 FROM
 
 (SELECT distinct trunc(ACTFIL.ACACTDTE) date1, ACTFIL.ACCIDNAM name_1
@@ -165,6 +165,34 @@ GROUP BY TRUNC(PTPSCHED.PPDUE), COLLID.CLCOLLID, COLLID.CLDEPT) brokenPP
 ON totPPCollid = brokenPPCollid
 AND workeddate4 = workeddate6
 
+LEFT JOIN
+
+(SELECT /*+PARALLEL (18)*/ CLCOLLID, CLSSNUM, CLNAME,CASE WHEN CLDEPT ='Ciudad Juarez' THEN 'Ciudad Juárez'
+ WHEN CLDEPT ='Queretaro' THEN 'Querétaro'
+ WHEN CLDEPT ='Leon' THEN 'León'
+ WHEN CLDEPT ='Cancun' THEN 'Cancún'
+ WHEN CLDEPT ='Mazatlan' THEN 'Mazatlán'
+ WHEN CLDEPT ='Ciudad Obregon' THEN 'Ciudad Obregón'
+ WHEN CLDEPT ='Comitan' THEN 'Comitán'
+ WHEN CLDEPT ='Cordoba' THEN 'Córdoba'
+ WHEN CLDEPT ='Culiacan' THEN 'Culiacán'
+ WHEN CLDEPT ='Merida' THEN 'Mérida'
+ WHEN CLDEPT ='San Juan del Rio' THEN 'San Juan del Río'
+ WHEN CLDEPT ='San Luis Potosi' THEN 'San Luis Potosí'
+ WHEN CLDEPT ='Tehuacan' THEN 'Tehuacán'
+ WHEN CLDEPT ='Torreon' THEN 'Torreón'
+ ELSE CLDEPT END CLDEPT,
+CASE WHEN CLDEPT IN ('Coatzacoalcos','Guadalajara','León','Leon','Mazatlán','Mazatlan','Monterrey','Puebla','Tampico','Tepic','Tuxtla','Veracruz',
+'Villahermosa') THEN 'Central' 
+WHEN CLDEPT IN ('Acapulco','Aguascalientes','Campeche','Cancún','Cancun','Celaya','Chetumal','Chihuahua','Chilpancingo','Ciudad del Carmen',
+'Ciudad Juárez','Ciudad Juarez','Ciudad Obregón','Ciudad Obregon','Ciudad Victoria','Colima','Comitán','Comitan','Córdoba','Cordoba','Cuautla',
+'Cuernavaca','Culiacán','Culiacan','Durango','Fresnillo','Guanajuato','Hermosillo','Irapuato','Istmo','La Paz','Los Mochis','Mérida','Merida',
+'Mexicali','Monclova','Morelia','Oaxaca','Orizaba','Pachuca','Playa del Carmen','Poza Rica','Puerto Vallarta','Querétaro','Queretaro','Salamanca',
+'Saltillo','San Juan del Río','San Juan del Rio','San Luis Potosí','San Luis Potosi','San Miguel de Allende','Tapachula','Tehuacán','Tehuacan',
+'Tijuana','Tlaxcala','Toluca','Torreón','Torreon','Tuxpan','Tuxtepec','Uriangato','Xalapa','Zacatecas','Zamora') THEN 'Tradicional' END FORMATO
+FROM RCVRY.COLLID)userS
+
+ON name_1= CLCOLLID
 where (name_1 like 'i7%' or name_1 like 'i5302%')
 order by 1, 2 DESC 
 
