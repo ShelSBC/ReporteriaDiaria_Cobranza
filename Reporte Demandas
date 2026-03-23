@@ -1,0 +1,138 @@
+select
+DTOS.PLAZA,
+MAYID.JUIC,
+DTOS.Tipo_juicio,
+DTOS.Fec_Tur_Juridico,
+DTOS.Monto_Demanda,
+MAYID.IDEP ORD_ETP_PROCES,
+DTOS.ETAPA_PROCESAL,
+DTOS.FEC_INICIO,
+DTOS.FEC_FIN,
+DTOS.Nombre,
+U.U6CURPRFC,
+DTOS.Cuenta,
+DTOS.Agencia_Legal,
+DTOS.Saldo,
+U.U6SALDOABO,
+CASE WHEN TRUNC(DTOS.Fec_Pago) > = TRUNC(DTOS.Fec_Tur_Juridico) THEN DTOS.Fec_Pago ELSE null END AS Fec_pago,
+CASE WHEN TRUNC(DTOS.Fec_Pago) > = TRUNC(DTOS.Fec_Tur_Juridico) THEN DTOS.Monto_Pago ELSE null END AS Monto_Pago,
+---DTOS.Fec_Pago,
+---DTOS.Monto_Pago,
+GARANT.CYDESC garantia
+
+from(select CSCASENO Juic, MAX(CSSTGID) IDEP
+from 	RCVRY.DELQMST, 	RCVRY.CASE, 	RCVRY.CASEACCT, RCVRY.CASESTAG
+where (	(	CASEACCT.CCACCTG = '6'  ) 
+		and (	CASE.CESTATUS = 'A' ) 
+		and (	DELQMST.DMACCTG = '6'   )	
+		--and (	DELQMST.DMSTATUS = 'W'	OR	DELQMST.DMSTATUS is null	)
+		and case.CELWYRAGENCY not in ('CNTGRO23')
+        and (   CSORDER <> '19')
+        and (   CASESTAG.CSSTDT is not null )
+        )  
+	and 	CASE.CECASENO = CASEACCT.CCCASENO 
+	and 	CASEACCT.CCACCTG = DELQMST.DMACCTG 
+	and 	CASEACCT.CCACCT = DELQMST.DMACCT 
+    and     CASESTAG.CSCASENO = CASE.CECASENO
+    and 	CASESTAG.CSCASENO = CASEACCT.CCCASENO
+group by CSCASENO   order by 1) MAYID
+
+LEFT OUTER JOIN
+
+(select CASE.CECASENO as Juicio, CASE.CETYPE Tipo_juicio, case
+        when DMLABEL6 = '0010' then 'Xalapa'
+        when DMLABEL6 = '0011' then 'Córdoba'
+        when DMLABEL6 = '0014' then 'Tuxtla'
+        when DMLABEL6 in ('0016','0085') then 'Coatzacoalcos'
+        when DMLABEL6 = '0017' then 'Poza Rica'
+        when DMLABEL6 = '0019' then 'Tapachula'
+        when DMLABEL6 = '0021' then 'Villahermosa'
+        when DMLABEL6 in ('A055','B055','C055') then 'Mazatlán'
+        when DMLABEL6 = '0027' then 'Acapulco'
+        when DMLABEL6 in ('0028','0073') then 'Veracruz'
+        when DMLABEL6 = '0031' then 'Monterrey'
+        when DMLABEL6 = '0035' then 'Ciudad Juárez'
+        when DMLABEL6 = '0036' then 'San Luís Potosí'
+        when DMLABEL6 = '0037' then 'Oaxaca'
+        when DMLABEL6 = '0041' then 'Tampico'
+        when DMLABEL6 = '0042' then 'Chihuahua'
+        when DMLABEL6 = '0043' then 'Torreón'
+        when DMLABEL6 = '0044' then 'Querétaro'
+        when DMLABEL6 = '0046' then 'Culiacán'
+        when DMLABEL6 = '0047' then 'Irapuato'
+        when DMLABEL6 = 'M048' then 'Pachuca'
+        when DMLABEL6 = '0050' then 'Hermosillo'
+        when DMLABEL6 in ('0051','A051','B051','C051','D051','E051','M051') then 'Guadalajara'
+        when DMLABEL6 = '0054' then 'Tepic'
+        when DMLABEL6 = '0057' then 'Morelia'
+        when DMLABEL6 = '0058' then 'Aguascalientes'
+        when DMLABEL6 = '0060' then 'Ciudad Obregón'
+        when DMLABEL6 = '0062' then 'Puerto Vallarta'
+        when DMLABEL6 = '0065' then 'Saltillo'
+        when DMLABEL6 = '0071' then 'León'
+        when DMLABEL6 = '0072' then 'Puebla'
+        when DMLABEL6 = 'M074' then 'Toluca'
+        when DMLABEL6 = '0075' then 'Cancún'
+        when DMLABEL6 in ('0076','458') then 'Mérida'
+        when DMLABEL6 = 'M077' then 'Cuernavaca'
+        when DMLABEL6 = '0079' then 'Chetumal'
+        when DMLABEL6 = '0084' then 'Colima'
+        when DMLABEL6 = '0089' then 'Durango'
+        when DMLABEL6 = '0102' then 'Campeche'
+        when DMLABEL6 = '0105' then 'Celaya'
+        when DMLABEL6 = '0121' then 'Orizaba'
+        when DMLABEL6 = '0126' then 'Ciudad Victoria'
+        when DMLABEL6 = '0127' then 'Zacatecas'
+        when DMLABEL6 = '0169' then 'Tuxpan'
+        when DMLABEL6 = '0177' then 'Tlaxcala'
+        when DMLABEL6 = '0178' then 'Zamora'
+        when DMLABEL6 = '0300' then 'Tehuacán'
+        when DMLABEL6 = '0302' then 'San Miguel de Allende'
+        when DMLABEL6 = '0303' then 'Chilpancingo'
+        when DMLABEL6 = '0304' then 'Ciudad del Carmen'
+        when DMLABEL6 = '0305' then 'Los Mochis'
+        when DMLABEL6 = '0307' then 'Playa del Carmen'
+        when DMLABEL6 = '0308' then 'La Paz'
+        when DMLABEL6 = '0310' then 'Istmo'
+        when DMLABEL6 = '0311' then 'San Juan del Río'
+        when DMLABEL6 = '0312' then 'Mexicali'
+        when DMLABEL6 = '0194' then 'Salamanca'
+        when DMLABEL6 = '0454' then 'Guanajuato'
+        when DMLABEL6 = '0192' then 'Cuautla'
+        when DMLABEL6 in ('M001','M002','M003','M004','M005','M006','M007','M008','M009','M010','M011','M012','M013','M014','M015',
+                           'M016','M017','M018','M019','M020','M021','M022','M023') then 'Metropolitano'
+        else 'Unknown'
+        end as PLAZA, DELQMST.DMNAME as Nombre, CASEACCT.CCACCT as Cuenta, DELQMST.DMAGENCY Agencia_Legal, DELQMST.DMCURBAL as Saldo, 
+    DELQMST.DMPAYDT as Fec_Pago, DELQMST.DMPAYAMT Monto_Pago, CASE.CELWSTAMT Monto_Demanda, CASE.CEACCEPTDT Fec_Tur_Juridico, 
+    CASESTAG.CSORDER ORD_ETP_PROCES, CASESTAG.CSDESC ETAPA_PROCESAL, CASESTAG.CSSTDT FEC_INICIO, CASESTAG.CSENDDT FEC_FIN
+from 	RCVRY.DELQMST, RCVRY.CASE, 	RCVRY.CASEACCT, RCVRY.CASESTAG
+where (	(	CASEACCT.CCACCTG = '6'  ) 
+		and (	CASE.CESTATUS = 'A' ) 
+		and (	DELQMST.DMACCTG = '6'   )	
+		--and (	DELQMST.DMSTATUS = 'W'	OR	DELQMST.DMSTATUS is null	)
+		and case.CELWYRAGENCY not in ('CNTGRO23')
+        and (   CSORDER <> '19'))
+        // and (   CASESTAG.CSSTDT is not null and CASESTAG.CSENDDT is null)) 
+	and 	CASE.CECASENO = CASEACCT.CCCASENO 
+	and 	CASEACCT.CCACCTG = DELQMST.DMACCTG 
+	and 	CASEACCT.CCACCT = DELQMST.DMACCT 
+    and     CASESTAG.CSCASENO = CASE.CECASENO
+    and 	CASESTAG.CSCASENO = CASEACCT.CCCASENO
+order by CECASENO, CSORDER desc) DTOS
+
+
+ON MAYID.JUIC = DTOS.Juicio
+AND MAYID.IDEP = DTOS.ORD_ETP_PROCES
+
+LEFT OUTER JOIN RCVRY.UDA6 U
+ON DTOS.Cuenta = U.U6ACCT
+
+LEFT OUTER JOIN
+
+(select * from RCVRY.COLLATERAL, RCVRY.COLL_DELLQMST, RCVRY.COLLTYPE
+where COLL_DELLQMST.CODCLID = COLLATERAL.CLID 
+AND CLCYTYPE = CYTYPE)GARANT
+
+ON GARANT.CODACCT = MAYID.JUIC
+
+ORDER BY 1, 2
