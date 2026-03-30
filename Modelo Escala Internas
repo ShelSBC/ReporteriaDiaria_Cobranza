@@ -1,4 +1,4 @@
-select  
+ select  
         ESCALA1.FILA,
         ESCALA1.CUENTAS,
         ESCALA1.IMPORTE,
@@ -135,12 +135,12 @@ from
 (SELECT A.DMQUE as FILA, count(A.DMACCT) as CUENTAS, sum(A.DMCURBAL) as SALDO
  FROM 
 (SELECT DMQUE,DMACCT,DMCURBAL,DMACCTG,DMAGENCY,U6BLOCKCODE1,U6CYCDUE FROM RCVRY.DELQUDA_BEGIN
- WHERE trunc(BEGINDT) = trunc(to_date('01/07/2025','dd/mm/yyyy'))
+ WHERE trunc(BEGINDT) = trunc(to_date('01/03/2026','dd/mm/yyyy'))
 
 UNION ALL 
 
 SELECT DMQUE,DMACCT,DMCURBAL,DMACCTG,DMAGENCY,U5BLOCKCODE1,U5CYCDUE FROM RCVRY.DELQUDA_BEGIN_MP
-WHERE trunc(BEGINDT) = trunc(to_date('01/07/2025','dd/mm/yyyy')))A
+WHERE trunc(BEGINDT) = trunc(to_date('01/03/2026','dd/mm/yyyy')))A
 
 where A.DMACCTG IN ('6','5')  
 and(( A.DMQUE in ('001C', '001E', '001L', '001N', '001O', '001P', '001W', '001X', '001Y', '002C', '002I', '002L', '002M', '002N', '002O', '002P', '002W', '002X', '002Y', '003L',
@@ -172,7 +172,8 @@ and(( A.DMQUE in ('001C', '001E', '001L', '001N', '001O', '001P', '001W', '001X'
                 '388S', '388Y', '454E', '454O', '454P', '454S', '454Y', '468E', '468O', '468P', '468S', '468Y', '471E', '471O', '471P', '471S', '471Y', '472E', '472O', '472P',
                 '472S', '472Y', '501C', '501X', '502C', '502X', '507C', '507X', '901P', '901S', '901Y', '902P', '902S', '902X', '902Y', '903P', '903S', '903X', '903Y', '904P',
                 '904S', '904X', '904Y', '905P', '905S', '905Y', '906P', '906S', '906Y', '907P', '907S', '907Y', 'D001', 'DELY', 'DILB', 'MACS', 'MCNS', '502W', '502L', '502S',
-                'FPDI', '004T', 'WEB1', 'WEB2', 'WEB7', '003C', '004C', '004K', '002R', '003R', '004R', '001U', '002U', '007U', '001S', '002S', '007S')
+                'FPDI', '004T', 'WEB1', 'WEB2', 'WEB7', '003C', '004C', '004K', '002R', '003R', '004R', '001U', '002U', '007U', '001S', '002S', '007S', '008O', '008S', '008U',
+                '004F')
 
 and A.U6CYCDUE in ('2','3','4','5','6')) or (A.DMQUE in ('D001')and A.U6CYCDUE in ('0','1')))
 and (A.U6BLOCKCODE1 not in ('A','K') or A.U6BLOCKCODE1 is null)
@@ -185,7 +186,7 @@ LEFT OUTER JOIN
 (select PMQUE as FILA, sum(PMTAMT) as IMPORTE
 from RCVRY.PMTFIL
 where PMACCTG IN ('5','6')
-and trunc(PMEDATE) >= trunc(to_date('01/07/2025','dd/mm/yyyy')) and trunc(PMEDATE) <= trunc(to_date('31/07/2025','dd/mm/yyyy'))
+and trunc(PMEDATE) >= trunc(to_date('01/03/2026','dd/mm/yyyy')) and trunc(PMEDATE) <= trunc(to_date('31/03/2026','dd/mm/yyyy'))
 
 and PMQUE in ('001C', '001E', '001L', '001N', '001O', '001P', '001W', '001X', '001Y', '002C', '002I', '002L', '002M', '002N', '002O', '002P', '002W', '002X', '002Y', '003L',
               '003M', '003P', '003W', '003X', '003Y', '004I', '004L', '004M', '004W', '004Y', '005P', '005Y', '007C', '007N', '007O', '007P', '007X', '007Y', '010E', '010L',
@@ -216,7 +217,8 @@ and PMQUE in ('001C', '001E', '001L', '001N', '001O', '001P', '001W', '001X', '0
               '388S', '388Y', '454E', '454O', '454P', '454S', '454Y', '468E', '468O', '468P', '468S', '468Y', '471E', '471O', '471P', '471S', '471Y', '472E', '472O', '472P',
               '472S', '472Y', '501C', '501X', '502C', '502X', '507C', '507X', '901P', '901S', '901Y', '902P', '902S', '902X', '902Y', '903P', '903S', '903X', '903Y', '904P',
               '904S', '904X', '904Y', '905P', '905S', '905Y', '906P', '906S', '906Y', '907P', '907S', '907Y', 'D001', 'DELY', 'DILB', 'MACS', 'MCNS', '502W', '502L', '502S',
-              'FPDI', '004T', 'WEB1', 'WEB2', 'WEB7', '003C', '004C', '004K', '002R', '003R', '004R', '001U', '002U', '007U', '001S', '002S', '007S')
+              'FPDI', '004T', 'WEB1', 'WEB2', 'WEB7', '003C', '004C', '004K', '002R', '003R', '004R', '001U', '002U', '007U', '001S', '002S', '007S', '008O', '008S', '008U',
+              '004F')
 
 group by PMQUE) P2
 
@@ -240,6 +242,7 @@ when (P1.FILA) like '%S' then 'S'
 when (P1.FILA) like '%U' then 'U'
 when (P1.FILA) like '%O' then 'O'
 when (P1.FILA) like '%T' then 'T'
+when (P1.FILA) like '%F' then 'FR'
 when (P1.FILA) like '%D001%' then 'D'
 when (P1.FILA) like '%FPDI%' then 'F'
 when (P1.FILA) like '%WEB%' then 'B'
@@ -267,7 +270,7 @@ when P1.FILA in ('016E','016O','016P','016S','016Y','085O','085P','085Y') then '
 when P1.FILA in ('084E','084O','084P','084S','084Y') then 'Colima'
 when P1.FILA in ('472E','472O','472P','472S','472Y') then 'Comitán'
 when P1.FILA in ('011E','011O','011P','011S','011Y') then 'Córdoba'
-when P1.FILA in ('DELY','DILB','MACS','D001','002M','003M','004M','004T') then 'Metropolitano 1'
+when P1.FILA in ('DELY','DILB','MACS','D001','002M','003M','004M','004T','004F') then 'Metropolitano 1'
 when P1.FILA in ('192E','192O','192P','192S','192Y') then 'Cuautla'
 when P1.FILA in ('077E','077O','077P','077S','077Y','301Y') then 'Cuernavaca'
 when P1.FILA in ('046E','046O','046P','046S','046Y') then 'Culiacán'
@@ -291,7 +294,7 @@ when P1.FILA in ('001C','001P','001X','001Y','002C','002P','002X','005Y','005P',
                  '903P','903S','904Y','904P','904S','905Y','905P','905S','906Y','906P','906S','007C',
                  '507C','007P','007Y','07SD','007X','507X','01SC','02SC','07SC','01SM','02SM','07SM',
                  '907P','907S','907Y','001N','002N','007N','001O','002O','007O','502W','502L','502S',
-                 'WEB1','WEB2','WEB7','001S','002S','007S','001U','002U','007U') then 'Metropolitano 2'
+                 'WEB1','WEB2','WEB7','001S','002S','007S','001U','002U','007U','008O','008S','008U') then 'Metropolitano 2'
 when P1.FILA in ('312E','312O','312P','312S','312Y') then 'Mexicali'
 when P1.FILA in ('468E','468O','468P','468S','468Y') then 'Monclova'
 when P1.FILA in ('031E','031O','031P','031S','031Y') then 'Monterrey'
@@ -345,7 +348,7 @@ when P1.FILA in ('001C','001E','001O','001P','001X','001Y','002C','002I','002L',
                  '073X','021L','021W','021X','04MP','007X','507X','06SD','054A','054B','054C','01SC','02SC','07SC','MACS',
                  '01SM','02SM','07SM','MCNS','04TG','D001','902X','903X','904X','907P','907S','907Y','003M','004M','001N',
                  '002N','007N','001O','002O','007O','002M','502W','502L','502S','FPDI','004T','WEB1','WEB2','WEB7','003C',
-                 '004C','004K','002R','003R','004R','001U','002U','007U','001S','002S','007S') 
+                 '004C','004K','002R','003R','004R','001U','002U','007U','001S','002S','007S','008O','008S','008U','004F') 
 then 'Central'
 
 when P1.FILA in ('010E','010O','010P','010S','010Y','011E','011O','011P','011S','011Y','017E','017O','017P','017S','017Y','019E','019O','019P',
@@ -384,8 +387,8 @@ when P1.FILA in ('010S','011S','017S','019S','027S','035S','036S','037S','042S',
                  '192S','194S','300S','302S','303S','304S','305S','306S','307S','308S','310S','311S','312S','388S','454S','468S','471S','472S')
 then 32
 
-/*when P1.FILA in ('01SD','02SD','07SD','001S','002S','007S')
-then 26*/
+when P1.FILA in ('01SD','02SD','07SD','001S','002S','007S','008S')
+then 26
 
 
 
@@ -425,28 +428,28 @@ when P1.FILA in ('001X','002X','003X','007X','010X','011X','014X','016X','017X',
                  '044X','046X','047X','048X','050X','051X','054X','055X','057X','058X','060X','062X','065X','071X','072X','073X','074X','075X','076X',
                  '077X','079X','084X','089X','102X','105X','121X','126X','127X','169X','300X','302X','303X','304X','305X','307X','308X','310X','311X',
                  '312X','501X','502X','507X','902X','903X','904X')
-then 48 /*Despachos Administrativos*/
+then 50 /*Despachos Administrativos*/
 
 when P1.FILA in ('001C','002C','007C','501C','502C','507C','003C','004C')
-then 52 /*Despachos Administrativos*/
+then 54 /*Despachos Administrativos*/
 
 when P1.FILA in ('03SD','04SD','05SD','06SD','002R','003R','004R')
 then 96 /*Call Center*/
 
 when P1.FILA in ('001W','002W','003W','004W','017W','021W','031W','043W','055W','060W','062W','071W','079W','084W','102W','105W','121W','126W','127W',
                  '169W','304W','307W','308W','310W','311W','312W')
-then 94 /*Call Centerl*/
+then 92 /*Call Centerl*/
 
 when P1.FILA in ('04LB','DILB','MACS','MCNS')
 then 80 /*Call Center*/
 
 when P1.FILA in ('002M','003M','004M')
-then 52 /*Call Center*/
+then 56 /*Call Center*/
 
 when P1.FILA in ('001L','002L','003L','004L','010L','011L','014L','016L','017L','019L','021L','027L','031L','035L','036L','037L','041L','042L','043L',
                  '044L','046L','047L','048L','050L','051L','054L','055L','057L','058L','060L','062L','065L','071L','072L','073L','075L','076L','077L',
                  '079L','084L','089L','102L','105L','121L','126L','127L','169L','300L','302L','303L','304L','305L','307L','308L','310L','311L','312L')
-then 98 /*Call Center*/
+then 96 /*Call Center*/
 
 when P1.FILA in ('014O','016O','021O','028O','031O','041O','051O','054O','055O','071O','072O','073O')
 then 16 /*Oficinas Central*/
@@ -458,21 +461,21 @@ then 18 /*Oficinas Tradicional*/
         
 when P1.FILA in ('DELY','054A','054B','054C','04TG') then 100 /*Call Center*/
 
-when P1.FILA in ('01SM','02SM','07SM','001U','002U','007U') then 54  /*Despachos Administrativos*/
+when P1.FILA in ('01SM','02SM','07SM','001U','002U','007U','008U') then 58  /*Despachos Administrativos*/
 
 when P1.FILA in ('001N','002N','007N') then 20 /*Despachos Administrativos*/
 
-when P1.FILA in ('001O','002O','007O') then 16 /*Oficinas Central*/
+when P1.FILA in ('001O','002O','007O','008O') then 16 /*Oficinas Central*/
 
-when P1.FILA in ('FPDI') then 15 /*Call Center*/
+when P1.FILA in ('FPDI') then 18 /*Call Center*/
 
-when P1.FILA in ('004T') then 15 /*Call Center*/
+when P1.FILA in ('004T') then 18 /*Call Center*/
 
-when P1.FILA in ('04TG') then 100 /*Call Center*/
+when P1.FILA in ('004K') then 18 /*Call Center*/
 
-when P1.FILA in ('004K') then 15 /*Call Center*/
+when P1.FILA in ('004F') then 18 /*Call Center*/
 
-when P1.FILA in ('WEB1','WEB2','WEB7') then 36 /*Despachos Administrativos*/
+when P1.FILA in ('WEB1','WEB2','WEB7') then 42 /*Despachos Administrativos*/
 
 else 1 end as META_PCT, 
 
@@ -507,7 +510,8 @@ when P1.FILA in ('001C', '001E', '001L', '001N', '001O', '001P', '001W', '001X',
                  '388S', '388Y', '454E', '454O', '454P', '454S', '454Y', '468E', '468O', '468P', '468S', '468Y', '471E', '471O', '471P', '471S', '471Y', '472E', '472O', '472P',
                  '472S', '472Y', '501C', '501X', '502C', '502X', '507C', '507X', '901P', '901S', '901Y', '902P', '902S', '902X', '902Y', '903P', '903S', '903X', '903Y', '904P',
                  '904S', '904X', '904Y', '905P', '905S', '905Y', '906P', '906S', '906Y', '907P', '907S', '907Y', 'D001', 'DELY', 'DILB', 'MACS', 'MCNS', '502W', '502L', '502S',
-                 'FPDI', '004T', 'WEB1', 'WEB2', 'WEB7', '003C', '004C', '004K', '002R', '003R', '004R', '001U', '002U', '007U', '001S', '002S', '007S') then 100
+                 'FPDI', '004T', 'WEB1', 'WEB2', 'WEB7', '003C', '004C', '004K', '002R', '003R', '004R', '001U', '002U', '007U', '001S', '002S', '007S', '008O', '008S', '008U',
+                 '004F') then 100
 
 else 0 end as PESO
 
@@ -516,12 +520,12 @@ from
 (select distinct(DMQUE) as FILA
  FROM 
 (SELECT DMQUE,U6BLOCKCODE1,DMACCTG,U6CYCDUE,DMAGENCY FROM RCVRY.DELQUDA_BEGIN
- WHERE trunc(BEGINDT) = trunc(to_date('01/07/2025','dd/mm/yyyy'))
+ WHERE trunc(BEGINDT) = trunc(to_date('01/03/2026','dd/mm/yyyy'))
 
 UNION ALL 
 
 SELECT DMQUE,U5BLOCKCODE1,DMACCTG,U5CYCDUE,DMAGENCY FROM RCVRY.DELQUDA_BEGIN_MP
-WHERE trunc(BEGINDT) = trunc(to_date('01/07/2025','dd/mm/yyyy')))A
+WHERE trunc(BEGINDT) = trunc(to_date('01/03/2026','dd/mm/yyyy')))A
 
 where DMACCTG  IN ('6','5') 
 and (( DMQUE in ('001C', '001E', '001L', '001N', '001O', '001P', '001W', '001X', '001Y', '002C', '002I', '002L', '002M', '002N', '002O', '002P', '002W', '002X', '002Y', '003L',
@@ -553,7 +557,8 @@ and (( DMQUE in ('001C', '001E', '001L', '001N', '001O', '001P', '001W', '001X',
                  '388S', '388Y', '454E', '454O', '454P', '454S', '454Y', '468E', '468O', '468P', '468S', '468Y', '471E', '471O', '471P', '471S', '471Y', '472E', '472O', '472P',
                  '472S', '472Y', '501C', '501X', '502C', '502X', '507C', '507X', '901P', '901S', '901Y', '902P', '902S', '902X', '902Y', '903P', '903S', '903X', '903Y', '904P',
                  '904S', '904X', '904Y', '905P', '905S', '905Y', '906P', '906S', '906Y', '907P', '907S', '907Y', 'D001', 'DELY', 'DILB', 'MACS', 'MCNS', '502W', '502L', '502S',
-                 'FPDI', '004T', 'WEB1', 'WEB2', 'WEB7', '003C', '004C', '004K', '002R', '003R', '004R', '001U', '002U', '007U', '001S', '002S', '007S')
+                 'FPDI', '004T', 'WEB1', 'WEB2', 'WEB7', '003C', '004C', '004K', '002R', '003R', '004R', '001U', '002U', '007U', '001S', '002S', '007S', '008O', '008S', '008U',
+                 '004F')
 
 and U6CYCDUE in ('2','3','4','5','6')) or (DMQUE in ('D001')and U6CYCDUE in ('0','1')))
 and (U6BLOCKCODE1 not in ('A','K') or U6BLOCKCODE1 is null)
