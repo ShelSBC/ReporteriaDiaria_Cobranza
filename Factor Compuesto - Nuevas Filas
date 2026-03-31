@@ -1,3 +1,0 @@
-select CLCOLLID, CLSSNUM, CLNAME, CLDEPT
-from rcvry.COLLID
-where CLCOLLID in ('i7044msr','i7044agp','i7043nle','i7021baj','i7014epp','i7311jcs')
