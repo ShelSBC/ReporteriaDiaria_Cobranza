@@ -1,4 +1,4 @@
-select
+select /*+PARALLEL(18)*/
  '' as "Responsable",
  Q4.DMAGENCY as "Agencia Actual",
  Q2.U5ORG as "Organización",
@@ -104,7 +104,7 @@ and Q3.U5CYCDUE >= '2'
 
 /
 
-select
+select /*+PARALLEL(18)*/
  '' as "Responsable",
  Q4.DMAGENCY as "Agencia Actual",
  Q2.U6ORG as "Organización",
