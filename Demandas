@@ -1,4 +1,4 @@
-select
+select /*+PARALLEL(18)*/
 DTOS.PLAZA,
 MAYID.JUIC,
 DTOS.Tipo_juicio,
