@@ -1,0 +1,209 @@
+select
+ '' as "Responsable",
+ Q4.DMAGENCY as "Agencia Actual",
+ Q2.U5ORG as "Organización",
+ '' as "Asignación",
+ Q1.PMACCT as "No. Cuenta",
+ Q4.DMBRANCH as "Almacen",
+ Q2.U5CYCDUE AS "CD Inicial",
+ Q3.U5BLOCKCODE1 as "Bloqueo 1",
+ Q3.U5BLOCKCODE2 as "Bloqueo 2",
+ Q4.DMPAYAMT as "Monto U. Pago",
+ Q4.DMPAYDT as "Fecha U. Pago",
+ Q2.DMCURBAL as "Saldo Begin",
+ Q1.PAGOS as "Pagos del mes",
+ Q4.DMCURBAL as "Saldo Total",
+ '' as "% Pagos",
+ '' as "% Quitas",
+ '' as "Rango",
+ Q3.U5CYCDUE AS "CD Final",
+ Q4.DMLABEL1 as "Nodo"
+
+-- Q5.AGCITY as "Plaza", 
+-- Q4.DMQUE as "Fila Actual",
+-- Q3.U6CYCDUE as "CD Actual",
+-- Q3.U6BLOCKDATE1 as "Fecha B1",
+-- Q3.U6BLOCKDATE2 as "Fecha B2"
+from 
+
+(
+select PMACCT, SUM(PMTAMT) PAGOS
+from RCVRY.PMTFIL
+where PMACCTG = '5'
+and (trunc(PMEDATE)>= '01-Mar-2026' and trunc(PMEDATE)<= '31-Mar-2026')
+and (PMAGENCY like 'DA%' or PMAGENCY like 'DK%' or PMAGENCY like 'DQ%' or PMAGENCY like 'LA%' or PMAGENCY like 'LK%'
+     or PMAGENCY like 'SA%' or PMAGENCY like 'SK%' or PMAGENCY like 'MA%' or PMAGENCY like 'MK%')
+group by PMACCT
+)Q1
+
+left outer join
+
+(
+select DMACCT, DMCURBAL, U5CYCDUE, U5ORG
+from RCVRY.DELQUDA_BEGIN_MP
+where TRUNC(BEGINDT) = '01-Mar-2026'
+and DMACCT in (
+select PMACCT
+from RCVRY.PMTFIL
+where PMACCTG = '5'
+and (trunc(PMEDATE)>= '01-Mar-2026' and trunc(PMEDATE)<= '31-Mar-2026')
+and (PMAGENCY like 'DA%' or PMAGENCY like 'DK%' or PMAGENCY like 'DQ%' or PMAGENCY like 'LA%' or PMAGENCY like 'LK%'
+     or PMAGENCY like 'SA%' or PMAGENCY like 'SK%' or PMAGENCY like 'MA%' or PMAGENCY like 'MK%')
+)
+)Q2
+
+on Q1.PMACCT = Q2.DMACCT
+
+left outer join
+
+(
+select U5ACCT, U5BLOCKCODE1, U5BLOCKCODE2, U5BLOCKDATE1, U5BLOCKDATE2, U5CYCDUE
+from RCVRY.UDA5
+where U5ACCT in (
+select PMACCT
+from RCVRY.PMTFIL
+where PMACCTG = '5'
+and (trunc(PMEDATE)>= '01-Mar-2026' and trunc(PMEDATE)<= '31-Mar-2026')
+and (PMAGENCY like 'DA%' or PMAGENCY like 'DK%' or PMAGENCY like 'DQ%' or PMAGENCY like 'LA%' or PMAGENCY like 'LK%'
+     or PMAGENCY like 'SA%' or PMAGENCY like 'SK%' or PMAGENCY like 'MA%' or PMAGENCY like 'MK%')
+)
+)Q3
+
+on Q1.PMACCT = Q3.U5ACCT
+
+left outer join
+
+(
+select DMACCT, DMPAYDT, DMPAYAMT, DMBRANCH, DMAGENCY, DMQUE, DMLABEL1, DMCURBAL 
+from RCVRY.DELQMST
+where DMACCTG = '5' 
+and DMACCT in (
+select PMACCT
+from RCVRY.PMTFIL
+where PMACCTG = '5'
+and (trunc(PMEDATE)>= '01-Mar-2026' and trunc(PMEDATE)<= '31-Mar-2026')
+and (PMAGENCY like 'DA%' or PMAGENCY like 'DK%' or PMAGENCY like 'DQ%' or PMAGENCY like 'LA%' or PMAGENCY like 'LK%'
+     or PMAGENCY like 'SA%' or PMAGENCY like 'SK%' or PMAGENCY like 'MA%' or PMAGENCY like 'MK%')
+)
+)Q4
+
+on Q1.PMACCT = Q4.DMACCT
+
+left outer join
+
+(
+select AGAGENCY, AGCITY
+from RCVRY.AGENCY
+)Q5
+
+on Q4.DMAGENCY = Q5.AGAGENCY
+
+where Q4.DMCURBAL <> '.0'
+and (Q3.U5BLOCKCODE1 = 'A' or Q3.U5BLOCKCODE1 ='K')
+and Q3.U5CYCDUE >= '2'
+
+/
+
+select
+ '' as "Responsable",
+ Q4.DMAGENCY as "Agencia Actual",
+ Q2.U6ORG as "Organización",
+ '' as "Asignación",
+ Q1.PMACCT as "No. Cuenta",
+ Q4.DMBRANCH as "Almacen",
+ Q2.U6CYCDUE AS "CD Inicial",
+ Q3.U6BLOCKCODE1 as "Bloqueo 1",
+ Q3.U6BLOCKCODE2 as "Bloqueo 2",
+ Q4.DMPAYAMT as "Monto U. Pago",
+ Q4.DMPAYDT as "Fecha U. Pago",
+ Q2.DMCURBAL as "Saldo Begin",
+ Q1.PAGOS as "Pagos del mes",
+ Q4.DMCURBAL as "Saldo Total",
+ '' as "% Pagos",
+ '' as "% Quitas",
+ '' as "Rango",
+ Q3.U6CYCDUE AS "CD Final",
+ Q4.DMLABEL1 as "Nodo"
+
+-- Q5.AGCITY as "Plaza", 
+-- Q4.DMQUE as "Fila Actual",
+-- Q3.U6CYCDUE as "CD Actual",
+-- Q3.U6BLOCKDATE1 as "Fecha B1",
+-- Q3.U6BLOCKDATE2 as "Fecha B2"
+from 
+
+(
+select PMACCT, SUM(PMTAMT) PAGOS
+from RCVRY.PMTFIL
+where PMACCTG = '6'
+and (trunc(PMEDATE)>= '01-Mar-2026' and trunc(PMEDATE)<= '31-Mar-2026')
+and (PMAGENCY like 'DA%' or PMAGENCY like 'DK%' or PMAGENCY like 'DQ%' or PMAGENCY like 'LA%' or PMAGENCY like 'LK%'
+     or PMAGENCY like 'SA%' or PMAGENCY like 'SK%' or PMAGENCY like 'MA%' or PMAGENCY like 'MK%')
+group by PMACCT
+)Q1
+
+left outer join
+
+(
+select DMACCT, DMCURBAL, U6CYCDUE, U6ORG
+from RCVRY.DELQUDA_BEGIN
+where TRUNC(BEGINDT) = '01-Mar-2026'
+and DMACCT in (
+select PMACCT
+from RCVRY.PMTFIL
+where PMACCTG = '6'
+and (trunc(PMEDATE)>= '01-Mar-2026' and trunc(PMEDATE)<= '31-Mar-2026')
+and (PMAGENCY like 'DA%' or PMAGENCY like 'DK%' or PMAGENCY like 'DQ%' or PMAGENCY like 'LA%' or PMAGENCY like 'LK%'
+     or PMAGENCY like 'SA%' or PMAGENCY like 'SK%' or PMAGENCY like 'MA%' or PMAGENCY like 'MK%')
+)
+)Q2
+
+on Q1.PMACCT = Q2.DMACCT
+
+left outer join
+
+(
+select U6ACCT, U6BLOCKCODE1, U6BLOCKCODE2, U6BLOCKDATE1, U6BLOCKDATE2, U6CYCDUE
+from RCVRY.UDA6
+where U6ACCT in (
+select PMACCT
+from RCVRY.PMTFIL
+where PMACCTG = '6'
+and (trunc(PMEDATE)>= '01-Mar-2026' and trunc(PMEDATE)<= '31-Mar-2026')
+and (PMAGENCY like 'DA%' or PMAGENCY like 'DK%' or PMAGENCY like 'DQ%' or PMAGENCY like 'LA%' or PMAGENCY like 'LK%'
+     or PMAGENCY like 'SA%' or PMAGENCY like 'SK%' or PMAGENCY like 'MA%' or PMAGENCY like 'MK%')
+)
+)Q3
+
+on Q1.PMACCT = Q3.U6ACCT
+
+left outer join
+
+(
+select DMACCT, DMPAYDT, DMPAYAMT, DMBRANCH, DMAGENCY, DMQUE, DMLABEL1, DMCURBAL 
+from RCVRY.DELQMST
+where DMACCTG = '6' 
+and DMACCT in (
+select PMACCT
+from RCVRY.PMTFIL
+where PMACCTG = '6'
+and (trunc(PMEDATE)>= '01-Mar-2026' and trunc(PMEDATE)<= '31-Mar-2026')
+and (PMAGENCY like 'DA%' or PMAGENCY like 'DK%' or PMAGENCY like 'DQ%' or PMAGENCY like 'LA%' or PMAGENCY like 'LK%'
+     or PMAGENCY like 'SA%' or PMAGENCY like 'SK%' or PMAGENCY like 'MA%' or PMAGENCY like 'MK%')
+)
+)Q4
+
+on Q1.PMACCT = Q4.DMACCT
+
+left outer join
+
+(
+select AGAGENCY, AGCITY
+from RCVRY.AGENCY
+)Q5
+
+on Q4.DMAGENCY = Q5.AGAGENCY
+
+where Q4.DMCURBAL <> '.0'
+and (Q3.U6BLOCKCODE1 = 'A' or Q3.U6BLOCKCODE1 ='K')
+and Q3.U6CYCDUE >= '2'
