@@ -13,20 +13,20 @@ from
 select DMACCT, DMQUE, DMAGENCY, U6CYCDUE, U6BLOCKCODE1, U6ORG
 from 
 (SELECT * FROM RCVRY.DELQUDA_BEGIN
-where trunc(BEGINDT) = trunc(to_date('01/03/2026','dd/mm/yyyy'))
+where trunc(BEGINDT) = trunc(to_date('01/04/2026','dd/mm/yyyy'))
 and (DMAGENCY LIKE 'DA%' OR DMAGENCY LIKE 'DK%' OR DMAGENCY LIKE 'DQ%'  OR DMAGENCY LIKE 'DK%'  OR DMAGENCY LIKE 'SK%' OR DMAGENCY LIKE 'MA%' 
 OR DMAGENCY LIKE 'MK%' OR DMAGENCY LIKE 'SA%' OR DMAGENCY LIKE 'SK%')
 UNION ALL 
 
 SELECT * FROM RCVRY.DELQUDA_BEGIN_MP
-where trunc(BEGINDT) = trunc(to_date('01/03/2026','dd/mm/yyyy'))
+where trunc(BEGINDT) = trunc(to_date('01/04/2026','dd/mm/yyyy'))
 and (DMAGENCY LIKE 'DA%' OR DMAGENCY LIKE 'DK%' OR DMAGENCY LIKE 'DQ%'  OR DMAGENCY LIKE 'DK%'  OR DMAGENCY LIKE 'SK%' OR DMAGENCY LIKE 'MA%' 
 OR DMAGENCY LIKE 'MK%' OR DMAGENCY LIKE 'SA%' OR DMAGENCY LIKE 'SK%')
 ) 
 where DMACCT in (
 select distinct PMACCT
 from RCVRY.PMTFIL
-where (trunc(PMEDATE) BETWEEN trunc(to_date('01/03/2026','dd/mm/yyyy')) AND trunc(SYSDATE - 1)
+where (trunc(PMEDATE) BETWEEN trunc(to_date('01/04/2026','dd/mm/yyyy')) AND trunc(SYSDATE - 1)
 )))P1
 
 left outer join
@@ -34,7 +34,7 @@ left outer join
 (
 select PMACCT, PMTDATE, PMEDATE, sum(PMTAMT) as IMPORTE, PMCOLLID,PMAGENCY
 from RCVRY.PMTFIL
-where (trunc(PMEDATE)BETWEEN trunc(to_date('01/03/2026','dd/mm/yyyy'))AND trunc(SYSDATE - 1))
+where (trunc(PMEDATE)BETWEEN trunc(to_date('01/04/2026','dd/mm/yyyy'))AND trunc(SYSDATE - 1))
 group by PMACCT, PMTDATE, PMEDATE, PMCOLLID,PMAGENCY
 
 )P2
@@ -74,7 +74,7 @@ FROM (
         U6BLOCKDATE1, U6BLOCKDATE2, 
         DMCURBAL
     FROM RCVRY.DELQUDA_BEGIN
-    WHERE TRUNC(BEGINDT) = TRUNC(TO_DATE('01/03/2026','DD/MM/YYYY'))
+    WHERE TRUNC(BEGINDT) = TRUNC(TO_DATE('01/04/2026','DD/MM/YYYY'))
       AND (
         DMAGENCY LIKE 'DA%' OR 
         DMAGENCY LIKE 'DK%' OR 
@@ -97,7 +97,7 @@ FROM (
         U5BLOCKDATE2 AS U6BLOCKDATE2,
         DMCURBAL
     FROM RCVRY.DELQUDA_BEGIN_MP
-    WHERE TRUNC(BEGINDT) = TRUNC(TO_DATE('01/03/2026','DD/MM/YYYY'))
+    WHERE TRUNC(BEGINDT) = TRUNC(TO_DATE('01/04/2026','DD/MM/YYYY'))
       AND (
         DMAGENCY LIKE 'DA%' OR 
         DMAGENCY LIKE 'DK%' OR 
