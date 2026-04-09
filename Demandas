@@ -112,7 +112,7 @@ where (	(	CASEACCT.CCACCTG = '6'  )
 		--and (	DELQMST.DMSTATUS = 'W'	OR	DELQMST.DMSTATUS is null	)
 		and case.CELWYRAGENCY not in ('CNTGRO23')
         and (   CSORDER <> '19'))
-        // and (   CASESTAG.CSSTDT is not null and CASESTAG.CSENDDT is null)) 
+        -- and (   CASESTAG.CSSTDT is not null and CASESTAG.CSENDDT is null)) 
 	and 	CASE.CECASENO = CASEACCT.CCCASENO 
 	and 	CASEACCT.CCACCTG = DELQMST.DMACCTG 
 	and 	CASEACCT.CCACCT = DELQMST.DMACCT 
