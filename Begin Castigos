@@ -1,0 +1,128 @@
+--ACCEPT FechaBegin DATE PROMPT '01/04/2026';
+select  A1.DMAGENCY as AGENCIA,
+A2.DMAGNREF as FECHA_ASIGNACION,
+A1.U6CHGOFFDATE as FECHA_CASTIGO,         
+A1.DMACCT as CUENTA,         
+A2.DMNAME as NOMBRE,         
+A1.DMCURBAL as SALDO_INICIAL,         
+A2.DMCURBAL as SALDO_ACTUAL,         
+A1.U6CYCDUE as CD,         
+A2.DMPPFLAG as STATUS_PP,         
+trunc(A2.DMPPDUE) as VENCIMIENTO_PP,         
+A2.DMPPAMT as IMPORTE_PP,         
+A2.DMPAYAMT as ULTIMO_PAGO,         
+A2.DMPAYDT as FECHA_ULTIMO_PAGO,         
+case         
+when A2.DMPAYAMT = '0' or A2.DMPAYAMT is null then 0 
+when A2.DMPPAMT = '0' or A2.DMPPAMT is null then 0         
+else A2.DMPAYAMT / A2.DMPPAMT         
+end as PCT_PAGO,         
+A2.DMLSTACT as ULTIMA_ACTIVIDAD, 
+case         
+when A1.DMLABEL6 = '0010' then 'Xalapa'         
+when A1.DMLABEL6 = '0011' then 'Córdoba'         
+when A1.DMLABEL6 = '0014' then 'Tuxtla'         
+when A1.DMLABEL6 in ('0016','0085') then 'Coatzacoalcos'         
+when A1.DMLABEL6 = '0017' then 'Poza Rica'         
+when A1.DMLABEL6 = '0019' then 'Tapachula'         
+when A1.DMLABEL6 = '0021' then 'Villahermosa'         
+when A1.DMLABEL6 in ('A055','B055','C055') then 'Mazatlan'         
+when A1.DMLABEL6 = '0027' then 'Acapulco'         
+when A1.DMLABEL6 in ('0028','0073') then 'Veracruz'         
+when A1.DMLABEL6 in ('0051','A051','B051','C051','D051','E051') then 'Guadalajara'         
+when A1.DMLABEL6 = '0031' then 'Monterrey'         
+when A1.DMLABEL6 = '0035' then 'Ciudad Juárez'         
+when A1.DMLABEL6 = '0036' then 'San Luís Potosí'         
+when A1.DMLABEL6 = '0037' then 'Oaxaca'         
+when A1.DMLABEL6 = '0041' then 'Tampico'         
+when A1.DMLABEL6 = '0042' then 'Chihuahua'         
+when A1.DMLABEL6 = '0043' then 'Torreón'         
+when A1.DMLABEL6 = '0044' then 'Querétaro'         
+when A1.DMLABEL6 = '0046' then 'Culiacán'         
+when A1.DMLABEL6 = '0047' then 'Irapuato'         
+when A1.DMLABEL6 = 'M048' then 'Pachuca'         
+when A1.DMLABEL6 = '0050' then 'Hermosillo'         
+when A1.DMLABEL6 = '0054' then 'Tepic'         
+when A1.DMLABEL6 = '0057' then 'Morelia'         
+when A1.DMLABEL6 = '0058' then 'Aguascalientes'         
+when A1.DMLABEL6 = '0060' then 'Ciudad Obregón'         
+when A1.DMLABEL6 = '0062' then 'Puerto Vallarta'         
+when A1.DMLABEL6 = '0065' then 'Saltillo'         
+when A1.DMLABEL6 = '0071' then 'León'         
+when A1.DMLABEL6 = '0072' then 'Puebla'         
+when A1.DMLABEL6 = 'M074' then 'Toluca'         
+when A1.DMLABEL6 = '0075' then 'Cancún'         
+when A1.DMLABEL6 = '0076' then 'Mérida'         
+when A1.DMLABEL6 = 'M077' then 'Cuernavaca'         
+when A1.DMLABEL6 = '0079' then 'Chetumal'         
+when A1.DMLABEL6 = '0084' then 'Colima'         
+when A1.DMLABEL6 = '0089' then 'Durango'         
+when A1.DMLABEL6 = '0102' then 'Campeche'         
+when A1.DMLABEL6 = '0105' then 'Celaya'         
+when A1.DMLABEL6 = '0121' then 'Orizaba'         
+when A1.DMLABEL6 = '0126' then 'Ciudad Victoria'         
+when A1.DMLABEL6 = '0127' then 'Zacatecas'         
+when A1.DMLABEL6 = '0169' then 'Tuxpan'         
+when A1.DMLABEL6 = '0177' then 'Tlaxcala'         
+when A1.DMLABEL6 = '0178' then 'Zamora'         
+when A1.DMLABEL6 = '0300' then 'Tehuacán'         
+when A1.DMLABEL6 = '0302' then 'San Miguel de Allende'         
+when A1.DMLABEL6 = '0303' then 'Chilpancingo'         
+when A1.DMLABEL6 = '0304' then 'Ciudad del Carmen'         
+when A1.DMLABEL6 = '0305' then 'Los Mochis'         
+when A1.DMLABEL6 = '0307' then 'Playa del Carmen'         
+when A1.DMLABEL6 = '0308' then 'La Paz'         
+when A1.DMLABEL6 = '0310' then 'Istmo'         
+when A1.DMLABEL6 = '0311' then 'San Juan del Río'         
+when A1.DMLABEL6 = '0312' then 'Mexicali'         
+when A1.DMLABEL6 = '0073' then 'Veracruz'         
+when A1.DMLABEL6 = '0471' then 'Fresnillo'         
+when A1.DMLABEL6 = '0472' then 'Comitán'         
+when A1.DMLABEL6 = '0161' then 'Tijuana'         
+when A1.DMLABEL6 = '0468' then 'Monclova'         
+when A1.DMLABEL6 = '0192' then 'Cuautla'         
+when A1.DMLABEL6 = '0141' then 'Uriangato'         
+when A1.DMLABEL6 = '0194' then 'Salamanca'         
+when A1.DMLABEL6 = '0454' then 'Guanajuato'         
+when A1.DMLABEL6 = '0388' then 'Tuxtepec'         
+when A1.DMLABEL6 in ('M001','M002','M003','M004','M005','M006','M007','M008','M009','M010','M011','M012','M013','M014','M015','M016','M017','M018','M019','M020','M021','M022','M023','CP00') then 'Metropolitano'         else 'Unknown'         
+end as PLAZA 
+from
+( select  /*+PARALLEL(8)*/ 
+DMACCT, 
+U6CHGOFFDATE, 
+DMAGENCY, 
+DMCURBAL, 
+U6CYCDUE, 
+DMLABEL6, 
+DMACCTG 
+from RCVRY.DELQUDA_BEGIN 
+where trunc(BEGINDT) = TO_DATE('01-04-2026', 'DD-MM-YYYY')  
+and (DMAGENCY like 'DK%' or DMAGENCY like 'LK%' or DMAGENCY like 'DKN00%') 
+and DMAGENCY not like 'DKN01%'  
+and DMAGENCY not like 'DKN02%'  and DMAGENCY not like 'DKN03%'  
+and DMAGENCY not like 'DKN04%' and DMAGENCY not like 'DKN05%' ) A1  
+left outer join  
+( select
+DMACCT, 
+DMAGNREF, 
+DMNAME, 
+DMCURBAL, 
+DMPPFLAG, 
+DMPPDUE, 
+DMPPAMT, 
+DMPAYAMT, 
+DMPAYDT, 
+DMLSTACT, 
+DMACCTG 
+from RCVRY.DELQMST 
+where DMACCT in ( select  /*+PARALLEL(32)*/  DMACCT
+from RCVRY.DELQUDA_BEGIN                 
+where trunc(BEGINDT) = TO_DATE('01-04-2026', 'DD-MM-YYYY')  
+and (DMAGENCY like 'DK%' or DMAGENCY like 'LK%' or DMAGENCY like 'DKN00%')
+and DMAGENCY not like 'DKN01%' 
+and DMAGENCY not like 'DKN02%'
+and DMAGENCY not like 'DKN03%'
+and DMAGENCY not like 'DKN04%'                 
+and DMAGENCY not like 'DKN05%') and DMACCTG = '6') A2 
+on A1.DMACCT = A2.DMACCT AND A1.DMACCTG = A2.DMACCTG
