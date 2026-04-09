@@ -1,0 +1,94 @@
+--ACCEPT FechaInicio DATE PROMPT 'Ingresa la fecha de inicio (DD/MM/YYYY): ';
+--ACCEPT FechaFin DATE PROMPT 'Ingresa la fecha de fin (DD/MM/YYYY): ';
+--ACCEPT FechaBegin DATE PROMPT 'Ingresa la fecha del Begin (DD/MM/YYYY): ';
+
+select
+PPACCT,         PPCOLLID,         DMAGENCY,         
+case 
+when DMLABEL6 = '0010' then 'Xalapa'         
+when DMLABEL6 = '0011' then 'Cordoba'         
+when DMLABEL6 = '0014' then 'Tuxtla'         
+when DMLABEL6 in ('0016','0085') then 'Coatzacoalcos'         
+when DMLABEL6 = '0017' then 'Poza Rica'         
+when DMLABEL6 = '0019' then 'Tapachula'         
+when DMLABEL6 = '0021' then 'Villahermosa'         
+when DMLABEL6 in ('A055','B055','C055') then 'Mazatlan'         
+when DMLABEL6 = '0027' then 'Acapulco'         
+when DMLABEL6 in ('0028','0073') then 'Veracruz'         
+when DMLABEL6 in ('0051','A051','B051','C051','D051','E051') then 'Guadalajara'         
+when DMLABEL6 = '0031' then 'Monterrey'         
+when DMLABEL6 = '0035' then 'Ciudad Juarez'         
+when DMLABEL6 = '0036' then 'San Luis Potosi'         
+when DMLABEL6 = '0037' then 'Oaxaca'         
+when DMLABEL6 = '0041' then 'Tampico'         
+when DMLABEL6 = '0042' then 'Chihuahua'         
+when DMLABEL6 = '0043' then 'Torreon'         
+when DMLABEL6 = '0044' then 'Queretaro'        
+when DMLABEL6 = '0046' then 'Culiacan'         
+when DMLABEL6 = '0047' then 'Irapuato'         
+when DMLABEL6 = 'M048' then 'Pachuca'         
+when DMLABEL6 = '0050' then 'Hermosillo'         
+when DMLABEL6 = '0054' then 'Tepic'         
+when DMLABEL6 = '0057' then 'Morelia'         
+when DMLABEL6 = '0058' then 'Aguascalientes'         
+when DMLABEL6 = '0060' then 'Ciudad Obregon'         
+when DMLABEL6 = '0062' then 'Puerto Vallarta'         
+when DMLABEL6 = '0065' then 'Saltillo'         
+when DMLABEL6 = '0071' then 'Leon'         
+when DMLABEL6 = '0072' then 'Puebla'         
+when DMLABEL6 = 'M074' then 'Toluca'         
+when DMLABEL6 = '0075' then 'Cancun'         
+when DMLABEL6 = '0076' then 'Merida'         
+when DMLABEL6 = 'M077' then 'Cuernavaca'         
+when DMLABEL6 = '0079' then 'Chetumal'         
+when DMLABEL6 = '0084' then 'Colima'         
+when DMLABEL6 = '0089' then 'Durango'         
+when DMLABEL6 = '0102' then 'Campeche'         
+when DMLABEL6 = '0105' then 'Celaya'         
+when DMLABEL6 = '0121' then 'Orizaba'         
+when DMLABEL6 = '0126' then 'Ciudad Victoria'         
+when DMLABEL6 = '0127' then 'Zacatecas'         
+when DMLABEL6 = '0169' then 'Tuxpan'         
+when DMLABEL6 = '0177' then 'Tlaxcala'         
+when DMLABEL6 = '0178' then 'Zamora'         
+when DMLABEL6 = '0300' then 'Tehuacan'         
+when DMLABEL6 = '0302' then 'San Miguel de Allende'         
+when DMLABEL6 = '0303' then 'Chilpancingo'         
+when DMLABEL6 = '0304' then 'Ciudad del Carmen'         
+when DMLABEL6 = '0305' then 'Los Mochis'        
+when DMLABEL6 = '0307' then 'Playa del Carmen'         
+when DMLABEL6 = '0308' then 'La Paz'         
+when DMLABEL6 = '0310' then 'Istmo'         
+when DMLABEL6 = '0311' then 'San Juan del Rio'         
+when DMLABEL6 = '0312' then 'Mexicali'         
+when DMLABEL6 = '0471' then 'Fresnillo'         
+when DMLABEL6 = '0073' then 'Veracruz'         
+when DMLABEL6 = '0472' then 'Comitan'         
+when DMLABEL6 = '0161' then 'Tijuana'         
+when DMLABEL6 = '0468' then 'Monclova'         
+when DMLABEL6 = '0192' then 'Cuautla'         
+when DMLABEL6 = '0141' then 'Uriangato'         
+when DMLABEL6 = '0194' then 'Salamanca'         
+when DMLABEL6 = '0454' then 'Guanajuato'         
+when DMLABEL6 = '0388' then 'Tuxtepec'         
+when DMLABEL6 in ('M001','M002','M003','M004','M005','M006','M007','M008','M009','M010','M011','M012','M013','M014','M015','M016','M017','M018','M019','M020','M021','M022','M023','CP00') then 'Metropolitano'         
+else 'Unknown'         
+end as PLAZA,         
+PPFLAG,         
+PPDUE,        
+PPAMT 
+from RCVRY.PTPSCHED, RCVRY.COLLID, RCVRY.DELQMST 
+where trunc(PPDUE) >= TO_DATE('01-04-2026', 'DD-MM-YYYY')
+and trunc(PPDUE) <= TO_DATE('30-04-2026', 'DD-MM-YYYY')
+and PPACCT in ( select DMACCT
+from RCVRY.DELQUDA_BEGIN                 
+where trunc(BEGINDT) = TO_DATE('01-04-2026', 'DD-MM-YYYY')                
+and DMAGENCY IS NOT NULL                 
+and (DMAGENCY like 'DK%' or DMAGENCY like 'LK%' or DMAGENCY like 'DKN00%')        
+and (DMAGENCY not like 'DKN01%'
+and DMAGENCY not like 'DKN02%'
+and DMAGENCY not like 'DKN03%'                 
+and DMAGENCY not like 'DKN04%'
+and DMAGENCY not like 'DKN05%'))
+and PPFLAG in ('C','R','P') and PPCOLLID = CLCOLLID
+and DMACCT = PPACCT and DMACCTG = PPACCTG
