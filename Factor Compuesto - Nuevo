@@ -17,6 +17,7 @@ FROM(
     AND DELQMST.DMACCTG = PMTFIL.PMACCTG
     AND DELQMST.DMACCT = PMTFIL.PMACCT
     GROUP BY trunc(PTPSCHED.PPDUE), PTPSCHED.PPCOLLID, PTPSCHED.PPACCT, PTPSCHED.PPAMT,(PMTFIL.PMTDDESC))A1
+    WHERE PPCOLLID NOT IN ('i7019lgg')
 GROUP BY A1.FECHA,A1.PPCOLLID,A1.PPACCT,A1.PPAMT
 ORDER BY A1.FECHA ASC
 
@@ -193,7 +194,7 @@ WHEN CLDEPT IN ('Acapulco','Aguascalientes','Campeche','Cancún','Cancun','Celay
 FROM RCVRY.COLLID)userS
 
 ON name_1= CLCOLLID
-where (name_1 like 'i7%' or name_1 like 'i5302%')
+where (name_1 like 'i7%' or name_1 like 'i5302%' or name_1 NOT IN ('i7019lgg'))
 order by 1, 2 DESC 
 
 
