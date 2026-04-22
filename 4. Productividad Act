@@ -10,7 +10,7 @@ WHEN CLDEPT IN ('Acapulco','Cancún','Chihuahua','Ciudad Juarez','Ciudad Juárez
 'Puerto Vallarta','Saltillo','San Luis Potosi','San Luís Potosí','Tapachula','Tepic','Torreon','Torreón','Xalapa') THEN 'AA'
 WHEN CLDEPT IN ('Aguascalientes','Guadalajara','Leon','León','Merida','Mérida','Metropolitano','Monterrey','Puebla','Queretaro','Querétaro',
 'Tampico','Toluca','Tuxtla','Veracruz','Villahermosa') THEN 'AAA'
-END CLF
+END CLF,workedAcctsSF
 FROM(
 
 SELECT /*+PARALLEL (18)*/
@@ -23,6 +23,7 @@ nvl(ppGeneradas,0) ppGeneradas,
 nvl(totPPAccts,0) totPPAccts, 
 nvl(keptPPAccts,0) keptPPAccts,  
 nvl(brokenppaccts,0) brokenppaccts, 
+nvl(workedAcctsSF,0) workedAcctsSF,
 CLDEPT,AGENCIA,CLAGENCY,CLNAME
 FROM
 
@@ -149,6 +150,28 @@ GROUP BY TRUNC(PTPSCHED.PPDUE), COLLID.CLCOLLID, COLLID.CLDEPT) brokenPP
 
 ON name_1 = brokenPPCollid
 AND date1 = workeddate6
+
+FULL OUTER JOIN
+
+(SELECT TRUNC(ACTFIL.ACACTDTE) workeddate1SF, COLLID.CLCOLLID workedCollidSF, COUNT(DELQMST.DMACCT) workedAcctsSF
+FROM rcvry.ACTVERTB, rcvry.DELQMST, rcvry.ACTFIL, rcvry.COLLID
+WHERE ((TRUNC(ACTFIL.ACACTDTE) BETWEEN TRUNC(TO_DATE('01/04/2026', 'dd/mm/yyyy'))AND TRUNC(TO_DATE(SYSDATE-1)))
+AND (COLLID.CLUTYPE IN ('1','2'))
+AND (ACTVERTB.AVTYPE = 'R')
+AND (ACTFIL.ACSEQNUM = '1')
+AND ACTFIL.ACACCODE IN ('VD','VT','VO') 
+AND ACTVERTB.AVACCTG IN ('6','5')
+AND CLCOLLID LIKE 'i8%')
+
+AND COLLID.CLCOLLID = ACTFIL.ACCIDNAM
+AND ACTFIL.ACACCTG = DELQMST.DMACCTG
+AND ACTFIL.ACACCT = DELQMST.DMACCT
+AND ACTFIL.ACRCCODE = ACTVERTB.AVCODE
+AND DELQMST.DMACCTG = ACTVERTB.AVACCTG
+GROUP BY TRUNC(ACTFIL.ACACTDTE), COLLID.CLCOLLID) worked_SF
+
+ON date1 = workeddate1SF
+AND name_1 = workedCollidSF
 
 LEFT JOIN
 
