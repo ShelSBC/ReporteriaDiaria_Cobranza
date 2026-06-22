@@ -1,4 +1,5 @@
-SELECT U6ORG, 
+SELECT /*+parallel (18)*/
+U6ORG, 
 DMAGENCY,
 Riesgo, 
 COUNT(DMACCT) Cuentas, 
