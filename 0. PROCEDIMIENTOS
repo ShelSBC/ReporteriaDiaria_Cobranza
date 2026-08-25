@@ -1,0 +1,3 @@
+CALL `crp-dev-dominio-negfin.mus_dev_cobr_prd_tbls.FAC_COB_ROLL_RATES`();
+
+CALL `crp-dev-dominio-negfin.mus_dev_cobr_prd_tbls.FAC_COB_ARCH_INTEGRACION`();
