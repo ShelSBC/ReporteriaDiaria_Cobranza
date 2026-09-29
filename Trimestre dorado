@@ -1,0 +1,38 @@
+    SELECT MES,ANIO,ORGANIZACION,ZONAS,SALDO_1_29,SALDO_30_59,SALDO_60_89,SALDO_90_119,SALDO_120_149,SALDO_150_179,SALDO_180_209,SALDO_210,PLAZA,
+    CASE WHEN B.PLAZA IN ('Aguascalientes','Campeche','Chihuahua','Chilpancingo','Ciudad Obregón','Comitán','Cuernavaca','Guadalajara','Mexicali', 'San Miguel de Allende','Xalapa') THEN 'Grupo 1'
+    WHEN B.PLAZA IN ('Ciudad del Carmen','Fresnillo','Mérida','Monterrey','Morelia','Oaxaca','Playa del Carmen','Puerto Vallarta','Salamanca','Saltillo','Zacatecas') THEN 'Grupo 2'
+        WHEN B.PLAZA IN ('Chetumal','Guanajuato','Los Mochis','Pachuca','Puebla','Tampico','Tapachula','Tehuacán','Tepic','Tlaxcala','Tuxpan') THEN 'Grupo 3'
+        WHEN B.PLAZA IN ('Culiacán','Durango','Irapuato','Orizaba','Querétaro','San Juan del Río','San Luis Potosí','Tijuana','Tuxtepec','Villahermosa','Zamora') THEN 'Grupo 4'
+                WHEN B.PLAZA IN ('Acapulco','Celaya','Ciudad Victoria','Colima','Hermosillo','León','Mazatlán','Monclova','Poza Rica','Tuxtla','Uriangato') THEN 'Grupo 5'
+                                WHEN B.PLAZA IN ('Cancún','Ciudad Juárez','Coatzacoalcos','Córdoba','Cuautla','Istmo','La Paz','Toluca','Torreón','Veracruz') THEN 'Grupo 6'
+    WHEN B.PLAZA IN ('Metropolitano') THEN 'Grupo 7'
+    END GRUPO
+    FROM (SELECT MES,
+    ANIO,
+    ORGANIZACION,
+    ZONAS,
+    NO_TIENDA,
+    SUM(SALDO_CARTERA_TOTAL) SALDO_CARTERA_TOTAL,
+    SUM(SALDO_VIGENTES_0_1) SALDO_VIGENTES_0_1,
+    SUM(SALDO_1_29) SALDO_1_29,
+    SUM(SALDO_30_59) SALDO_30_59,
+    SUM(SALDO_60_89) SALDO_60_89,
+    SUM(SALDO_90_119) SALDO_90_119,
+    SUM(SALDO_120_149) SALDO_120_149,
+    SUM(SALDO_150_179) SALDO_150_179,
+    SUM(SALDO_180_209) SALDO_180_209,
+    SUM(SALDO_210) SALDO_210,
+    SUM(SALDO_CARTERA_VENCIDA) SALDO_CARTERA_VENCIDA,
+    SUM(SALDO_CARTERA_90) SALDO_CARTERA_90
+    FROM crp-dev-dominio-negfin.mus_dev_cobr_prd_tbls.FAC_COB_ROLL_RATES 
+    WHERE MES = 9
+    AND ANIO= 2026
+    GROUP BY 1,2,3,4,5)A
+
+    LEFT JOIN 
+
+    (SELECT TDA_CVE, CASE WHEN PLAZA IN ('Atizapan','Coacalco','Tezontle') THEN 'Metropolitano'
+    WHEN PLAZA IN ('Los Cabos') THEN 'La Paz' ELSE PLAZA END PLAZA FROM `crp-dev-dominio-negfin.mus_dev_cobr_prd_tbls.FAC_COB_CAT_TDA`
+    WHERE FLG_ACTIVA= 1)B
+
+    ON A.NO_TIENDA = B.TDA_CVE
